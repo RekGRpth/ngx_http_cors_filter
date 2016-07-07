@@ -76,7 +76,7 @@ http {
 }
 ```
 
-* cors_force: force coover reseponse header even if it have already [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) header       
+* cors_force: force cover reseponse header even if it have already [CORS](https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS) header       
 Syntax:     cors_force on|off      
 Default:    on           
 Context:    main|server|location       
