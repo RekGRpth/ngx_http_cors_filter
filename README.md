@@ -91,6 +91,18 @@ http {
 }
 ```
 
+* cors_expose: add reseponse header `Access-Control-Expose-Headers: X-My-Custom-Header, X-Another-Custom-Header
+`
+Syntax:     cors_expose string      
+Default:    null           
+Context:    main|server|location       
+
+```
+http {
+    cors_expose "X-My-Custom-Header, X-Another-Custom-Header";
+}
+```
+
 Contributing
 ------------
 
