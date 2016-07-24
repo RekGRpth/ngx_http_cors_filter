@@ -5,6 +5,7 @@
 
 
 #define CORS_HEADER_ORIGIN "origin"
+#define CORS_MAX_AGE_DEFAULT "3600"
 
 
 static ngx_int_t ngx_http_cors_filter_init(ngx_conf_t *cf);
@@ -19,6 +20,7 @@ typedef struct {
     ngx_array_t *cors;
     ngx_flag_t force;
     ngx_str_t expose;
+    ngx_str_t age;
 } ngx_http_cors_loc_conf_t;
 
 
@@ -62,6 +64,14 @@ static ngx_command_t ngx_http_cors_filter_commands[] = {
         ngx_conf_set_str_slot,
         NGX_HTTP_LOC_CONF_OFFSET,
         offsetof(ngx_http_cors_loc_conf_t, expose),
+        NULL
+    },
+    {
+        ngx_string("cors_age"),
+        NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+        ngx_conf_set_str_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_cors_loc_conf_t, age),
         NULL
     },
     ngx_null_command
@@ -146,6 +156,8 @@ ngx_http_cors_create_loc_conf(ngx_conf_t *cf)
     conf->force = NGX_CONF_UNSET;
     conf->expose.data = NULL;
     conf->expose.len = 0;
+    conf->age.data = NULL;
+    conf->age.len = 0;
 
     return conf;
 }
@@ -162,6 +174,7 @@ ngx_http_cors_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
     }
     ngx_conf_merge_value(conf->force, prev->force, 1);
     ngx_conf_merge_str_value(conf->expose, prev->expose, "");
+    ngx_conf_merge_str_value(conf->age, prev->age, CORS_MAX_AGE_DEFAULT);
 
     return NGX_CONF_OK;
 }
@@ -225,17 +238,24 @@ found:
     if (ngx_http_cors_response_header_replace_or_add(r, &find, &replace) != NGX_OK) {
         return NGX_ERROR;
     }
-
-    if (hclf->expose.len > 0) {
-        ngx_str_set(&find, "Access-Control-Expose-Headers");
-        if (ngx_http_cors_response_header_replace_or_add(r, &find, &hclf->expose) != NGX_OK) {
-            return NGX_ERROR;
-        }
-    }
     
     ngx_str_set(&find, "Access-Control-Allow-Origin");
     if (ngx_http_cors_response_header_replace_or_add(r, &find, &header[i].value) != NGX_OK) {
         return NGX_ERROR;
+    }
+
+    if (r->method == NGX_HTTP_OPTIONS) {
+        if (hclf->expose.len > 0) {
+            ngx_str_set(&find, "Access-Control-Expose-Headers");
+            if (ngx_http_cors_response_header_replace_or_add(r, &find, &hclf->expose) != NGX_OK) {
+                return NGX_ERROR;
+            }
+        }
+        
+        ngx_str_set(&find, "Access-Control-Max-Age");
+        if (ngx_http_cors_response_header_replace_or_add(r, &find, &hclf->age) != NGX_OK) {
+            return NGX_ERROR;
+        }
     }
 
     return ngx_http_next_header_filter(r);
