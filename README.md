@@ -51,6 +51,8 @@ For example:
 http {
     cors //\.cors.com$;
     cors //.*\.cors.com$;
+    cors_force on;
+    cors_expose "X-My-Custom-Header, X-Another-Custom-Header";
 }
 ```
 
