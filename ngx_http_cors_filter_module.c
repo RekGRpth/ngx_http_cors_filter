@@ -6,7 +6,7 @@
 
 #define CORS_HEADER_ORIGIN "origin"
 #define CORS_MAX_AGE_DEFAULT "3600"
-#define CORS_METHOD_DEFAULT "GET, POST, PUT, DELETE, OPTIONS"
+#define CORS_METHOD_DEFAULT "GET,POST,PUT,DELETE,OPTIONS"
 
 
 static ngx_int_t ngx_http_cors_filter_init(ngx_conf_t *cf);
@@ -23,6 +23,7 @@ typedef struct {
     ngx_str_t expose;
     ngx_str_t age;
     ngx_str_t method;
+    ngx_str_t header;
 } ngx_http_cors_loc_conf_t;
 
 
@@ -82,6 +83,14 @@ static ngx_command_t ngx_http_cors_filter_commands[] = {
         ngx_conf_set_str_slot,
         NGX_HTTP_LOC_CONF_OFFSET,
         offsetof(ngx_http_cors_loc_conf_t, method),
+        NULL
+    },
+    {
+        ngx_string("cors_header"),
+        NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
+        ngx_conf_set_str_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_cors_loc_conf_t, header),
         NULL
     },
     ngx_null_command
@@ -188,6 +197,7 @@ ngx_http_cors_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
     ngx_conf_merge_str_value(conf->expose, prev->expose, "");
     ngx_conf_merge_str_value(conf->age, prev->age, CORS_MAX_AGE_DEFAULT);
     ngx_conf_merge_str_value(conf->method, prev->method, CORS_METHOD_DEFAULT);
+    ngx_conf_merge_str_value(conf->header, prev->header, "");
 
     return NGX_CONF_OK;
 }
@@ -273,6 +283,13 @@ found:
         ngx_str_set(&find, "Access-Control-Allow-Methods");
         if (ngx_http_cors_response_header_replace_or_add(r, &find, &hclf->method) != NGX_OK) {
             return NGX_ERROR;
+        }
+        
+        if (hclf->header.len > 0) {
+            ngx_str_set(&find, "Access-Control-Allow-Headers");
+            if (ngx_http_cors_response_header_replace_or_add(r, &find, &hclf->header) != NGX_OK) {
+                return NGX_ERROR;
+            }
         }
     }
 
