@@ -226,6 +226,13 @@ found:
         return NGX_ERROR;
     }
 
+    if (hclf->expose.len > 0) {
+        ngx_str_set(&find, "Access-Control-Expose-Headers");
+        if (ngx_http_cors_response_header_replace_or_add(r, &find, &hclf->expose) != NGX_OK) {
+            return NGX_ERROR;
+        }
+    }
+    
     ngx_str_set(&find, "Access-Control-Allow-Origin");
     if (ngx_http_cors_response_header_replace_or_add(r, &find, &header[i].value) != NGX_OK) {
         return NGX_ERROR;
