@@ -94,8 +94,8 @@ http {
 }
 ```
 
-* cors_expose: add reseponse header `Access-Control-Expose-Headers: X-My-Custom-Header, X-Another-Custom-Header
-`
+* cors_expose: add reseponse header `Access-Control-Expose-Headers: X-My-Custom-Header, X-Another-Custom-Header`
+
 Syntax:     cors_expose string      
 Default:    null           
 Context:    main|server|location       
@@ -107,6 +107,7 @@ http {
 ```
 
 * cors_age: add reseponse header `Access-Control-Max-Age: 3600`
+
 Syntax:     cors_age string      
 Default:    3600           
 Context:    main|server|location       
@@ -118,6 +119,7 @@ http {
 ```
 
 * cors_method: add reseponse header `Access-Control-Allow-Methods: <method>[, <method>]*`
+
 Syntax:     cors_method string      
 Default:    null           
 Context:    main|server|location       
@@ -129,6 +131,7 @@ http {
 ```
 
 * cors_header: add reseponse header `Access-Control-Allow-Headers: X-PINGOTHER, Content-Type`
+
 Syntax:     cors_header string  
 Default:    null           
 Context:    main|server|location       
