@@ -53,6 +53,9 @@ http {
     cors //.*\.cors.com$;
     cors_force on;
     cors_expose "X-My-Custom-Header, X-Another-Custom-Header";
+    cors_age "360000";
+    cors_method "GET, POST, OPTIONS";
+    cors_header "Origin";
 }
 ```
 
@@ -100,6 +103,39 @@ Context:    main|server|location
 ```
 http {
     cors_expose "X-My-Custom-Header, X-Another-Custom-Header";
+}
+```
+
+* cors_age: add reseponse header `Access-Control-Max-Age: 3600`
+Syntax:     cors_age string      
+Default:    3600           
+Context:    main|server|location       
+
+```
+http {
+    cors_expose "99999999";
+}
+```
+
+* cors_method: add reseponse header `Access-Control-Allow-Methods: <method>[, <method>]*`
+Syntax:     cors_method string      
+Default:    null           
+Context:    main|server|location       
+
+```
+http {
+    cors_method "POST, GET, OPTIONS";
+}
+```
+
+* cors_header: add reseponse header `Access-Control-Allow-Headers: X-PINGOTHER, Content-Type`
+Syntax:     cors_header string  
+Default:    null           
+Context:    main|server|location       
+
+```
+http {
+    cors_header "X-PINGOTHER, Content-Type";
 }
 ```
 
