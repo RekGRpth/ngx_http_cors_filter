@@ -18,6 +18,7 @@ static ngx_int_t ngx_http_cors_response_header_replace_or_add(ngx_http_request_t
 typedef struct {
     ngx_array_t *cors;
     ngx_flag_t force;
+    ngx_str_t expose;
 } ngx_http_cors_loc_conf_t;
 
 
@@ -53,6 +54,14 @@ static ngx_command_t ngx_http_cors_filter_commands[] = {
         ngx_conf_set_flag_slot,
         NGX_HTTP_LOC_CONF_OFFSET,
         offsetof(ngx_http_cors_loc_conf_t, force),
+        NULL
+    },
+    {
+        ngx_string("cors_expose"),
+        NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
+        ngx_conf_set_str_slot,
+        NGX_HTTP_LOC_CONF_OFFSET,
+        offsetof(ngx_http_cors_loc_conf_t, expose),
         NULL
     },
     ngx_null_command
@@ -135,6 +144,8 @@ ngx_http_cors_create_loc_conf(ngx_conf_t *cf)
         return NULL;
     }
     conf->force = NGX_CONF_UNSET;
+    conf->expose.data = NGX_CONF_UNSET_PTR;
+    conf->expose.len = NGX_CONF_UNSET_SIZE;
 
     return conf;
 }
@@ -150,6 +161,7 @@ ngx_http_cors_merge_loc_conf(ngx_conf_t *cf, void *parent, void *child)
         conf->cors = prev->cors;
     }
     ngx_conf_merge_value(conf->force, prev->force, 1);
+    ngx_conf_merge_str_value(conf->expose, prev->expose, "");
 
     return NGX_CONF_OK;
 }
