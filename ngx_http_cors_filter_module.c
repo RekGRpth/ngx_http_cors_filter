@@ -58,7 +58,7 @@ static ngx_command_t ngx_http_cors_filter_commands[] = {
     },
     {
         ngx_string("cors_expose"),
-        NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_FLAG,
+        NGX_HTTP_MAIN_CONF|NGX_HTTP_SRV_CONF|NGX_HTTP_LOC_CONF|NGX_CONF_TAKE1,
         ngx_conf_set_str_slot,
         NGX_HTTP_LOC_CONF_OFFSET,
         offsetof(ngx_http_cors_loc_conf_t, expose),
@@ -144,8 +144,8 @@ ngx_http_cors_create_loc_conf(ngx_conf_t *cf)
         return NULL;
     }
     conf->force = NGX_CONF_UNSET;
-    conf->expose.data = NGX_CONF_UNSET_PTR;
-    conf->expose.len = NGX_CONF_UNSET_SIZE;
+    conf->expose.data = NULL;
+    conf->expose.len = 0;
 
     return conf;
 }
