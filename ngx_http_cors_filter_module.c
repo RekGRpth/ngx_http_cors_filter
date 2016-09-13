@@ -269,7 +269,7 @@ found:
 
     if (r->method == NGX_HTTP_OPTIONS) {
         if (hclf->expose.len > 0) {
-            ngx_str_set(&find, "Access-Control-Expose-Headers");
+            ngx_str_set(&find, "Access-Control-Allow-Headers");
             if (ngx_http_cors_response_header_replace_or_add(r, &find, &hclf->expose) != NGX_OK) {
                 return NGX_ERROR;
             }
