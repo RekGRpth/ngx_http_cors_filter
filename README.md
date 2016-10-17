@@ -114,7 +114,7 @@ Context:    main|server|location
 
 ```
 http {
-    cors_expose "99999999";
+    cors_age "99999999";
 }
 ```
 
