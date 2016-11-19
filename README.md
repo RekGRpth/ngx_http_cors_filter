@@ -24,6 +24,7 @@ http {
 }
 
 or 
+
 http {
     cors //example\.com$;
     cors //.*?\.example\.com$;
